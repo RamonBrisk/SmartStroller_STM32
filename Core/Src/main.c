@@ -110,18 +110,6 @@ float Value[22];////取22个值做滤波用
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /* USER CODE END 0 */
 
 /**
@@ -184,7 +172,7 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
     /* USER CODE BEGIN 3 */
 
 
-	 // HAL_Delay(1000);
+	  HAL_Delay(1000);
 //	  {
 	  int32_t  sound = 0;
 	  int32_t temperature = BMP180_GetRawTemperature();
