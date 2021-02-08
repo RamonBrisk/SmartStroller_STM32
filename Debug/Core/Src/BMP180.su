@@ -1,0 +1,9 @@
+BMP180.c:32:6:BMP180_SetOversampling	16	static
+BMP180.c:38:6:BMP180_UpdateCalibrationData	16	static
+BMP180.c:54:6:BMP180_WriteReg	32	static
+BMP180.c:60:9:BMP180_ReadReg	32	static
+BMP180.c:81:9:BMP180_GetRawTemperature	32	static
+BMP180.c:101:7:BMP180_GetTemperature	24	static
+BMP180.c:110:9:BMP180_GetPressure	56	static
+BMP180.c:145:9:BMP180_GetUT	16	static
+BMP180.c:149:9:BMP180_GetUP	16	static

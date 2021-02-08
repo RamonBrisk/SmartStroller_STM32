@@ -1,0 +1,14 @@
+mlx90614.c:19:17:MLX90614_Read16	32	static
+mlx90614.c:33:17:MLX90614_Read16Eeprom	32	static
+mlx90614.c:51:9:crc8	0	static
+mlx90614.c:71:17:MLX90614_Write16Crc	40	static
+mlx90614.c:96:17:MLX90614_Write16Eeprom	24	static
+mlx90614.c:124:7:MLX90614_KelvinToCelsius	8	static
+mlx90614.c:134:17:MLX90614_ReadAmbientTemperature	24	static
+mlx90614.c:148:17:MLX90614_ReadObjectTemperature	24	static
+mlx90614.c:163:17:MLX90614_GetId	16	static
+mlx90614.c:183:17:MLX90614_GetEmissivity	24	static
+mlx90614.c:198:17:MLX90614_SetEmissivity	32	static
+mlx90614.c:234:17:MLX90614_ResetEmissivity	8	static
+mlx90614.c:251:17:MLX90614_SetAddress	8	static
+mlx90614.c:265:17:MLX90614_Init	0	static
