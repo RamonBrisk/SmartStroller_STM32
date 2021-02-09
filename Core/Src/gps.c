@@ -43,7 +43,7 @@ uint8_t rx_data = 0;
 uint8_t rx_buffer[GPSBUFSIZE];
 uint8_t rx_index = 0;
 
-GPS_t GPS;
+
 
 #if (GPS_DEBUG == 1)
 void GPS_print(char *data){

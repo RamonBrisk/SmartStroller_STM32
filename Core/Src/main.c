@@ -58,6 +58,7 @@ float AmbientTemperature;
 float Emissivity;
 
 
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -146,18 +147,14 @@ int main(void)
   MX_I2C1_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
+
+
   HAL_UART_Receive_IT(&huart3, uart3_rxbuf, 1);
   BMP180_SetOversampling(BMP180_ULTRA);
   BMP180_UpdateCalibrationData();
   MLX90614_Init(&hi2c1);
   MLX90614_SetEmissivity(0.985);
   GPS_Init();
-
-
-
-  float a = 0.2;
-int size = sizeof(a);
-
 
 HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 
@@ -174,7 +171,7 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
     /* USER CODE BEGIN 3 */
 
 
-	  HAL_Delay(1000);
+//	  HAL_Delay(1000);
 //	  {
 	  int32_t  sound = 0;
 	  int32_t temperature = BMP180_GetRawTemperature();
@@ -185,8 +182,6 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 	  MLX90614_GetEmissivity(&Emissivity);
 	  float AirQuality = airQuality();
 
-	  int32_t upLoad[10];
-
 	  int32_t package1[5] = {0,0,0,0,0};
 	  int32_t package2[5] = {0,0,0,0,0};
 	  int32_t package3[5] = {0,0,0,0,0};
@@ -194,24 +189,20 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 	  package1[0] = 0;
 	  package2[0] = 1;
 	  package3[0] = 2;
-
+//包1
 	  package1[1] = pressure;
 	  package1[2] = temperature;
 	  package1[3] = (int32_t)(float)(AmbientTemperature * 100);
 	  package1[4] = (int32_t)(float)(ObjectTemperature * 100);
-
+//包2
 	  package2[1] = AirQuality;
 	  package2[2] = sound;
-
-
-//	  upLoad[0] = pressure;
-//	  upLoad[1] = temperature;
-//	  upLoad[2] = (int32_t)(float)(AmbientTemperature * 100);
-//	  upLoad[3] = (int32_t)(float)(ObjectTemperature * 100);
-//	  upLoad[4] = AirQuality;
-//	  upLoad[5] = sound;
-	 // (int32_t)(AmbientTemperature*100);
-	 // HAL_UART_Transmit(&huart3,upLoad,24,0xFFFF); 旧包
+	  package2[3] = (int32_t)(GPS.dec_longitude * 1000000);//扩大了一百万倍为整数
+	  package2[4] = (int32_t)(GPS.dec_longitude * 1000000);
+//包3
+	  package3[1] = (int32_t)(GPS.msl_altitude * 100);
+	  package3[2] = (int32_t)(GPS.msl_altitude * 100);
+	  package3[3] = (int32_t)(GPS.satelites);
 
 
 

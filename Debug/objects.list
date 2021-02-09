@@ -1,6 +1,7 @@
 "Core/Src/BMP180.o"
 "Core/Src/adc.o"
 "Core/Src/gpio.o"
+"Core/Src/gps.o"
 "Core/Src/i2c.o"
 "Core/Src/main.o"
 "Core/Src/mlx90614.o"
