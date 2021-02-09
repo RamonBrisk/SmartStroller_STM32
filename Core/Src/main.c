@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "mlx90614.h"
 #include "BMP180.h"
+#include "GPS.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -150,6 +151,7 @@ int main(void)
   BMP180_UpdateCalibrationData();
   MLX90614_Init(&hi2c1);
   MLX90614_SetEmissivity(0.985);
+  GPS_Init();
 
 
 
@@ -297,6 +299,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //串口3连接了蓝牙
 	 if(huart->Instance == USART2)
 	      {
+
+
+		 	GPS_UART_CallBack();
 
 			    // 重新注册一次，要不然下次收不到了（上个函数内部已经注册）
 	      }
