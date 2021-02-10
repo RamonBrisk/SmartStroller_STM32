@@ -56,6 +56,10 @@ uint8_t WheelDrive = 0x04;
 float ObjectTemperature;
 float AmbientTemperature;
 float Emissivity;
+float  sound = 0;
+float temperature = 0;
+float AirQuality = 0;
+uint32_t pressure = 0;
 
 
 
@@ -99,9 +103,6 @@ float Value[22];////取22个值做滤波用
          max = (Value[n]<max)?max:Value[n];
          min = (min<Value[n])?min:Value[n];
      }
-
-     float rkz = (AD_Value - max - min) / 20;
-
 
      float result = (float)((AD_Value - max - min) / 20) * (3.311 / 4096);
 
@@ -173,42 +174,44 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 
 //	  HAL_Delay(1000);
 //	  {
-	  int32_t  sound = 0;
-	  int32_t temperature = BMP180_GetRawTemperature();
-	  int32_t pressure = BMP180_GetPressure();
+
+	  temperature = BMP180_GetRawTemperature();
+	  pressure = BMP180_GetPressure();
 	  MLX90614_ReadAmbientTemperature(&AmbientTemperature);
 	  sound = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_12);
 	  MLX90614_ReadObjectTemperature(&ObjectTemperature);
 	  MLX90614_GetEmissivity(&Emissivity);
-	  float AirQuality = airQuality();
+	  AirQuality = airQuality();
 
-	  int32_t package1[5] = {0,0,0,0,0};
-	  int32_t package2[5] = {0,0,0,0,0};
-	  int32_t package3[5] = {0,0,0,0,0};
-
+	  uint32_t package1[5] = {0,0,0,0,0};
+	  uint32_t package2[5] = {0,0,0,0,0};
+	  uint32_t package3[5] = {0,0,0,0,0};
+//确定包头
 	  package1[0] = 0;
 	  package2[0] = 1;
 	  package3[0] = 2;
 //包1
 	  package1[1] = pressure;
 	  package1[2] = temperature;
-	  package1[3] = (int32_t)(float)(AmbientTemperature * 100);
-	  package1[4] = (int32_t)(float)(ObjectTemperature * 100);
-//包2
-	  package2[1] = AirQuality;
-	  package2[2] = sound;
-	  package2[3] = (int32_t)(GPS.dec_longitude * 1000000);//扩大了一百万倍为整数
-	  package2[4] = (int32_t)(GPS.dec_longitude * 1000000);
-//包3
-	  package3[1] = (int32_t)(GPS.msl_altitude * 100);
-	  package3[2] = (int32_t)(GPS.msl_altitude * 100);
-	  package3[3] = (int32_t)(GPS.satelites);
+	  memcpy(&package1[3],&AmbientTemperature,4);
+	  memcpy(&package1[4],&ObjectTemperature,4);
 
+//包2
+	  memcpy(&package2[1],&AirQuality,4);
+	  memcpy(&package2[2],&sound,4);
+
+	  //直接把GPS经度（float类型） memcpy到数据包内
+	  memcpy(&package2[3],&GPS.dec_longitude,4);
+	  memcpy(&package2[4],&GPS.dec_latitude,4);
+//包3
+	  memcpy(&package3[1],&GPS.msl_altitude,4);
+	  memcpy(&package3[2],&GPS.speed_km,4);
+	  memcpy(&package3[3],&GPS.satelites,4);
 
 
 	  HAL_UART_Transmit(&huart3,package1,20,0xFFFF);
 	  HAL_UART_Transmit(&huart3,package2,20,0xFFFF);
-//	  HAL_UART_Transmit(&huart3,package3,24,0xFFFF);
+	  HAL_UART_Transmit(&huart3,package3,24,0xFFFF);
 
 
 //
