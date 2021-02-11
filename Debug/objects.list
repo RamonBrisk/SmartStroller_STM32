@@ -1,4 +1,5 @@
 "Core/Src/BMP180.o"
+"Core/Src/DHT.o"
 "Core/Src/adc.o"
 "Core/Src/gpio.o"
 "Core/Src/gps.o"
