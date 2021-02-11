@@ -1,5 +1,5 @@
-main.c:83:7:airQuality	128	static
-main.c:123:5:main	88	static
-main.c:251:6:SystemClock_Config	88	static
-main.c:293:6:HAL_UART_RxCpltCallback	16	static
-main.c:430:6:Error_Handler	4	static
+main.c:88:7:airQuality	128	static
+main.c:128:5:main	24	static
+main.c:257:6:SystemClock_Config	88	static
+main.c:299:6:HAL_UART_RxCpltCallback	16	static
+main.c:436:6:Error_Handler	4	static

@@ -60,8 +60,13 @@ float Emissivity;
 float  sound = 0;
 float temperature = 0;
 float AirQuality = 0;
+float humidity;
 uint32_t pressure = 0;
 DHT_data DHT11data;
+
+ uint32_t package1[5] = {0,0,0,0,0};
+uint32_t package2[5] = {0,0,0,0,0};
+uint32_t package3[5] = {0,0,0,0,0};
 
 
 /* USER CODE END PV */
@@ -183,11 +188,12 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 	  MLX90614_ReadObjectTemperature(&ObjectTemperature);
 	  MLX90614_GetEmissivity(&Emissivity);
 	  AirQuality = airQuality();
-	  DHT11data = DHT_getData (DHT11);
 
- 	  uint32_t package1[5] = {0,0,0,0,0};
-	  uint32_t package2[5] = {0,0,0,0,0};
-	  uint32_t package3[5] = {0,0,0,0,0};
+	  DHT11data = DHT_getData (DHT11);
+	  if (DHT11data.hum != 0) humidity = DHT11data.hum;
+
+
+
 //确定包头
 	  package1[0] = 0;
 	  package2[0] = 1;
@@ -209,7 +215,7 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 	  memcpy(&package3[1],&GPS.msl_altitude,4);
 	  memcpy(&package3[2],&GPS.speed_km,4);
 	  package3[3] = GPS.satelites;
-	  memcpy(&package3[4],&DHT11data.hum,4);
+	  memcpy(&package3[4],&humidity,4);
 
 	  HAL_UART_Transmit(&huart3,package1,20,0xFFFF);
 	  HAL_UART_Transmit(&huart3,package2,20,0xFFFF);
