@@ -60,6 +60,10 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define DHT11_Pin GPIO_PIN_4
 #define DHT11_GPIO_Port GPIOA
+#define Trig_Pin GPIO_PIN_5
+#define Trig_GPIO_Port GPIOA
+#define Echo_Pin GPIO_PIN_6
+#define Echo_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

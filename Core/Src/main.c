@@ -21,6 +21,7 @@
 #include "main.h"
 #include "adc.h"
 #include "i2c.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -61,12 +62,14 @@ float  sound = 0;
 float temperature = 0;
 float AirQuality = 0;
 float humidity;
+float distance;
 uint32_t pressure = 0;
 DHT_data DHT11data;
 
- uint32_t package1[5] = {0,0,0,0,0};
+uint32_t package1[5] = {0,0,0,0,0};
 uint32_t package2[5] = {0,0,0,0,0};
 uint32_t package3[5] = {0,0,0,0,0};
+uint32_t package4[5] = {0,0,0,0,0};
 
 
 /* USER CODE END PV */
@@ -116,6 +119,28 @@ float Value[22];////取22个值做滤波用
 }
 
 
+float getDistance() {
+				HAL_TIM_Base_Start_IT(&htim2);
+		  	    htim2.Instance->CNT = 0;
+		  	    float t1,t2,distance;
+		  	    HAL_GPIO_WritePin(Trig_GPIO_Port,Trig_Pin,GPIO_PIN_RESET);
+		  	    HAL_GPIO_WritePin(Trig_GPIO_Port,Trig_Pin,GPIO_PIN_SET);
+		  	    HAL_Delay(1);
+		  	    HAL_GPIO_WritePin(Trig_GPIO_Port,Trig_Pin,GPIO_PIN_RESET);
+		  	   while(HAL_GPIO_ReadPin(Echo_GPIO_Port,Echo_Pin) == GPIO_PIN_RESET)
+		  	   t1=htim2.Instance->CNT;
+		  	   while(HAL_GPIO_ReadPin(Echo_GPIO_Port,Echo_Pin) == GPIO_PIN_SET)
+		  	   t2=htim2.Instance->CNT;
+		  	   htim2.Instance->CNT = 0;
+		  	   distance=(t2-t1)*17/(float)1000;
+		  	   HAL_GPIO_WritePin(Trig_GPIO_Port,Trig_Pin,GPIO_PIN_RESET);
+		  	   return distance;
+}
+
+
+
+
+
 
 
 
@@ -153,6 +178,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_I2C1_Init();
   MX_ADC1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
 
@@ -178,9 +204,9 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
     /* USER CODE BEGIN 3 */
 
 
-//	  HAL_Delay(1000);
-//	  {
 
+	  HAL_Delay(500);
+	  distance = getDistance();
 	  temperature = BMP180_GetRawTemperature();
 	  pressure = BMP180_GetPressure();
 	  MLX90614_ReadAmbientTemperature(&AmbientTemperature);
@@ -188,7 +214,6 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 	  MLX90614_ReadObjectTemperature(&ObjectTemperature);
 	  MLX90614_GetEmissivity(&Emissivity);
 	  AirQuality = airQuality();
-
 	  DHT11data = DHT_getData (DHT11);
 	  if (DHT11data.hum != 0) humidity = DHT11data.hum;
 
@@ -198,6 +223,7 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 	  package1[0] = 0;
 	  package2[0] = 1;
 	  package3[0] = 2;
+	  package4[0] = 3;
 //包1
 	  package1[1] = pressure;
 	  package1[2] = temperature;
@@ -217,10 +243,14 @@ HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
 	  package3[3] = GPS.satelites;
 	  memcpy(&package3[4],&humidity,4);
 
+//包4
+	  memcpy(&package4[1],&distance,4);
+
+
 	  HAL_UART_Transmit(&huart3,package1,20,0xFFFF);
 	  HAL_UART_Transmit(&huart3,package2,20,0xFFFF);
-	  HAL_UART_Transmit(&huart3,package3,24,0xFFFF);
-
+	  HAL_UART_Transmit(&huart3,package3,20,0xFFFF);
+	  HAL_UART_Transmit(&huart3,package4,20,0xFFFF);
 
 //
 //
